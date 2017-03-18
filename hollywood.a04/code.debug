@@ -1,0 +1,265 @@
+# decode()
+
+0c4f 3cf0 fe0f 3c50 3f4a 0012 733c 8c4f 0000 3f4a 0012 6e3c ...
+
+0c4f           mov	r15, r12
+3cf0 fe0f      and	#0xffe, r12
+3c50 00e0      add	#0xe000, r12
+0a4b           mov	r11, r10
+3f4a           mov	@r10+, r15
+0012           push	pc
+733c           jmp	$+0xe8
+8c4f 0000      mov	r15, 0x0(r12)
+3f4a           mov	@r10+, r15
+0012           push	pc
+6e3c           jmp	$+0xde
+8c4f 0200      mov	r15, 0x2(r12)
+3f4a           mov	@r10+, r15
+0012           push	pc
+693c           jmp	$+0xd4
+8c4f 0400      mov	r15, 0x4(r12)
+7ff0 1f00      and.b	#0x1f, r15
+3f53           add	#-0x1, r15
+fe23           jnz	$-0x2
+3f4a           mov	@r10+, r15
+0012           push	pc
+603c           jmp	$+0xc2
+8c4f 0600      mov	r15, 0x6(r12)
+3f4a           mov	@r10+, r15
+0012           push	pc
+5b3c           jmp	$+0xb8
+.
+.
+.
+
+# jumble(r15)
+
+013c 0343 0e4a 8e10 013c 9580 3e80 d204 013c 91a1 0e52 0e10 ...
+
+013c           jmp	$+0x4
+0343           clr	4
+0e4a           mov	r10, r14
+8e10           swpb	r14
+013c           jmp	$+0x4
+0343           clr	4
+3e80 d204      sub	#0x4d2, r14
+013c           jmp	$+0x4
+0343           clr	4
+0e52           add	sr, r14
+0e10           rrc	r14
+013c           jmp	$+0x4
+0343           clr	4
+0eaa           dadd	r10, r14
+013c           jmp	$+0x4
+0343           clr	4
+0e11           rra	r14
+013c           jmp	$+0x4
+0343           clr	4
+0e10           rrc	r14
+2ea0           dadd	@pc, r14
+013c           jmp	$+0x4
+0343           clr	4
+0e52           add	sr, r14
+0e10           rrc	r14
+013c           jmp	$+0x4
+0343           clr	4
+2e50           add	@pc, r14
+0e10           rrc	r14
+013c           jmp	$+0x4
+0343           clr	4
+0e10           rrc	r14
+013c           jmp	$+0x4
+0343           clr	4
+0fee           xor	r14, r15
+013c           jmp	$+0x4
+0343           clr	4
+3e41           pop	r14
+2e53           incd	r14
+013c           jmp	$+0x4
+0343           clr	4
+004e           br	r14
+
+# cleanup
+
+0212 3e80 1541 013c 12b0 8e43 1541 8e43 1741 8e43 1941 8e43 ...
+
+0212           push	sr
+3e80 1541      sub	#0x4115, r14
+013c           jmp	$+0x4
+0343           clr	4
+8e43 1541      clr	0x4115(r14)
+8e43 1741      clr	0x4117(r14)
+8e43 1941      clr	0x4119(r14)
+8e43 1b41      clr	0x411b(r14)
+8e43 1d41      clr	0x411d(r14)
+8e43 1f41      clr	0x411f(r14)
+8e43 2141      clr	0x4121(r14)
+0b4c           mov	r12, r11
+3b80 9431      sub	#0x3194, r11
+3c40 2846      mov	#0x4628, r12
+3c50 5000      add	#0x50, r12
+3240 00a0      mov	#0xa000, sr
+b012 1000      call	#0x10
+0f53           add	#0x0, r15
+0d4f           mov	r15, r13
+3df0 f01f      and	#0x1ff0, r13
+3d50 0050      add	#0x5000, r13
+3090 0080      cmp	#0x8000, pc
+0234           jge	$+0x6
+3d50 0030      add	#0x3000, r13
+3c80 be44      sub	#0x44be, r12
+0e40           mov	pc, r14
+0d12           push	r13
+3e80 c800      sub	#0xc8, r14
+0e12           push	r14
+0f4e           mov	r14, r15
+0c12           push	r12
+bd4e 0000      mov	@r14+, 0x0(r13)
+2d53           incd	r13
+2c83           decd	r12
+0c93           tst	r12
+fa23           jnz	$-0xa
+3c41           pop	r12
+3e41           pop	r14
+3c40 dc00      mov	#0xdc, r12
+8e43 0000      clr	0x0(r14)
+2e53           incd	r14
+2c83           decd	r12
+0c93           tst	r12
+fa23           jnz	$-0xa
+3d41           pop	r13
+004d           br	r13
+
+1) get input
+
+r13=9d60
+e0c0=4115+9fab (r14)
+
+e0c0:   b012 1000 3c40 144a  ....<@.J
+e0c8:   004d 0912 3c40 0000  .M..<@..
+
+b012 1000      call	#0x10
+3c40 144a      mov	#0x4a14, r12
+004d           br	r13
+
+2) r12=478c
+
+ ecf0:   3540 0026 3c40 8c47  5@.&<@.G
+ ecf8:   004d b012 1000 0000  .M......
+ ed00:   0000 0000 0000 0000  ........
+
+ 3540 0026      mov	#0x2600, r5
+ 3c40 8c47      mov	#0x478c, r12
+ 004d           br	r13
+
+3) r12=4b18
+
+ e380:   0643 3c40 184b 004d  .C<@.K.M
+ e388:   ce93 0000 3c40 0000  ....<@..
+
+ 0643           clr	r6
+3c40 184b      mov	#0x4b18, r12
+004d           br	r13
+
+4) r12=e6a0 r4=
+
+e6a0:   2455 3c40 3a46 004d  $U<@:F.M
+e6a8:   6720 3c40 e245 0000  g <@.E..
+
+2455           add	@r5, r4
+3c40 3a46      mov	#0x463a, r12
+004d           br	r13
+
+5) r12=eca0 r4=adde
+
+eca0:   8410 3c40 c64b 004d  ..<@.K.M
+eca8:   b012 1000 3c40 0000  ....<@..
+
+8410           swpb	r4
+3c40 c64b      mov	#0x4bc6, r12
+004d           br	r13
+
+6) r12=e3a0 r4=dead
+
+e3a0:   36e5 3c40 b849 004d  6.<@.I.M
+e3a8:   b012 1000 3c40 0000  ....<@..
+
+36e5           xor	@r5+, r6
+3c40 b849      mov	#0x49b8, r12
+004d           br	r13
+
+7) r12=e5d0 r4=dead r6=adde
+
+e5d0:   06e4 3c40 9449 004d  ..<@.I.M
+e5d8:   033c 3c40 4246 0000  .<<@BF..
+
+06e4           xor	r4, r6
+3c40 9449      mov	#0x4994, r12
+004d           br	r13
+
+8) r12=e380 r4=dead r6=7373
+
+e380:   04e6 3c40 804b 004d  ..<@.K.M
+e388:   3af0 0624 3c40 0000  :..$<@..
+
+04e6           xor	r6, r4
+3c40 804b      mov	#0x4b80, r12
+004d           br	r13
+
+9) r12=ef50 r4=adde r6=7373
+
+ef50:   06e4 3c40 004a 004d  ..<@.J.M
+ef58:   0441 3c40 9e49 0000  .A<@.I..
+
+06e4           xor	r4, r6
+3c40 004a      mov	#0x4a00, r12
+004d           br	r13
+
+10) r12=e400 r5=2602
+
+e400:   8593 0000 3c40 bc47  ....<@.G
+e408:   004d 8c49 3941 0000  .M.I9A..
+
+8593 0000      tst	0x0(r5)
+3c40 bc47      mov	#0x47bc, r12
+004d           br	r13
+
+11) r12=ef00 sr=0005
+
+ef00:   0742 3c40 da4c 004d  .B<@.L.M
+ef08:   b012 7846 3c40 0000  ..xF<@..
+
+0742           mov	sr, r7
+3c40 da4c      mov	#0x4cda, r12
+004d           br	r13
+
+12) r7=? => 2
+
+eb10:   27f3 3c40 ce47 004d  '.<@.G.M
+eb18:   12c3 3c40 3a4b 0000  ..<@:K..
+
+27f3           and	#0x2, r7
+3c40 ce47      mov	#0x47ce, r12
+004d           br	r13
+
+12) r7=0
+
+e3a0:   0711 3c40 ee4b 004d  ..<@.K.M
+e3a8:   b140 7300 0600 0000  .@s.....
+
+0711           rra	r7
+3c40 ee4b      mov	#0x4bee, r12
+004d           br	r13
+
+..
+..
+..
+
+XX) r4=0121 r6=1f41 r7=0
+
+e510:   04e6 3c40 804b 004d  ..<@.K.M
+e518:   3af0 0624 3c40 0000  :..$<@..
+
+04e6           xor	r6, r4
+3c40 804b      mov	#0x4b80, r12
+004d           br	r13

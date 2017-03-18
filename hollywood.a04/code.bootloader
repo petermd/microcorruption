@@ -1,0 +1,115 @@
+013c d1a1 3140 0044 013c d1a1 1542 5c01
+013c d1a1 75f3 013c d1a1 35d0 085a 013c
+d1a1 3f40 0011 013c d1a1 0f93 0724 013c
+d1a1 8245 5c01 013c d1a1 2f83 0343 013c
+d1a1 1e4f 3446 013c d1a1 8f4e 0024 013c
+d1a1 ef23 013c d1a1 0f43 0f93 013c d1a1
+0e24 013c d1a1 8245 5c01 013c d1a1 1f83
+013c d1a1 cf43 0035 013c d1a1 f923 013c
+d1a1 3e40 0012 013c d1a1 3f40 0024 013c
+d1a1 bf4f feef 013c d1a1 3e53 fa23 013c
+d1a1 3b40 0c16 013c d1a1 0212 013c d1a1
+3040 be44
+
+:0x4400
+# sp=4400
+0343           clr	4
+0343           clr	4
+3140 0044      mov	#0x4400, sp
+0343           clr	4
+0343           clr	4
+# r5=*15c
+1542 5c01      mov	&0x015c, r5
+0343           clr	4
+0343           clr	4
+# r5&=0xff
+75f3           and.b	#-0x1, r5
+0343           clr	4
+0343           clr	4
+# r5|=0x5a08
+35d0 085a      bis	#0x5a08, r5
+0343           clr	4
+0343           clr	4
+# i=1100
+3f40 0011      mov	#0x1100, r15
+0343           clr	4
+0343           clr	4
+# while (i>0) {
+0f93           tst	r15
+0724           jz	$+0x10
+0343           clr	4
+0343           clr	4
+# :loop
+# *15c=5a08
+8245 5c01      mov	r5, &0x015c
+0343           clr	4
+0343           clr	4
+# i-=2
+2f83           decd	r15
+0343           clr	4
+0343           clr	4
+0343           clr	4
+# *(2400+i)=*(4634+i)
+1e4f 3446      mov	0x4634(r15), r14
+0343           clr	4
+0343           clr	4
+8f4e 0024      mov	r14, 0x2400(r15)
+0343           clr	4
+0343           clr	4
+# } // :loopA
+ef23           jnz	$-0x20
+0343           clr	4
+0343           clr	4
+0f43           clr	r15
+0f93           tst	r15
+0343           clr	4
+0343           clr	4
+# jmp :loopB
+0e24           jz	$+0x1e
+0343           clr	4
+0343           clr	4
+# *15c=r5
+8245 5c01      mov	r5, &0x015c
+0343           clr	4
+0343           clr	4
+# // r15=0?
+# r15-=2
+1f83           dec	r15
+0343           clr	4
+0343           clr	4
+# *(3500+i)=0
+cf43 0035      mov.b	#0x0, 0x3500(r15)
+0343           clr	4
+0343           clr	4
+f923           jnz	$-0xc
+0343           clr	4
+# :loopB
+0343           clr	4
+# r14=1200
+3e40 0012      mov	#0x1200, r14
+0343           clr	4
+0343           clr	4
+# r15=2400
+3f40 0024      mov	#0x2400, r15
+0343           clr	4
+0343           clr	4
+# while(r14-->0) {
+# *(r15-1000)=*(r15)
+# r15+=2
+bf4f feef      mov	@r15+, -0x1002(r15)
+0343           clr	4
+0343           clr	4
+3e53           add	#-0x1, r14
+# }
+fa23           jnz	$-0xa
+0343           clr	4
+0343           clr	4
+# r11=160c
+3b40 0c16      mov	#0x160c, r11
+0343           clr	4
+0343           clr	4
+# push(sr)
+0212           push	sr
+0343           clr	4
+0343           clr	4
+3040 be44      br	#0x44be

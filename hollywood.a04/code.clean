@@ -1,0 +1,163 @@
+:44be
+# INT(0x20) r15=16-bit random
+3240 00a0      mov	#0xa000, sr
+b012 1000      call	#0x10
+
+# r12=(81f1&0xff2)+0xe000
+0c4f           mov	r15, r12
+3cf0 fe0f      and	#0xffe, r12
+3c50 00e0      add	#0xe000, r12
+
+# Replace with repeatable writer
+
+:44be
+# INT(0x20) r15=16-bit random
+3240 00a0      mov	#0xa000, sr
+b012 1000      call	#0x10
+
+# r12=(81f1&0xff2)+0xe000
+0c4f           mov	r15, r12
+1c40 00e1      mov #0x0100,r12
+3c50 00e0      add	#0xe000, r12
+
+let 44c8=403c;
+let 44ca=0100;
+
+# PROGRAM
+
+sub #0x8, sp
+mov #0x8000, sr
+...
+puts("Whats the password?")
+...
+# pwd=2600
+mov #0x2600, r5
+# r6=0
+clr r6
+# r4=swap(pwd[0])
+add @r5, r4
+# swp(r4)
+swpb r4
+# r6=0^pwd[0] // pwd+=2
+xor @r5+, r6
+# exchange(r4,r6)
+# r6^=r4
+xor r4,r6
+# r4^=r6
+xor r6,r4
+# r6^=r4
+xor r4,r6
+# sr=(pwd[2]==0)
+tst 0x0(r5)
+
+# r7=sr
+mov sr,r7
+# r7&=2
+and #0x2, r7
+# r7>>
+rra r7
+# r6^=1
+xor 0x1, r7
+# swp(r7)
+swpb r7
+# r7>>
+rra r7
+# sxt(r7)
+sxt r7
+# swp(r7)
+swpb r7
+# sxt(r7)
+sxt r7
+# r8=4b18&r7
+mov #0x4b18, r8
+and r7,r8
+# r7^=0xffff
+xor #-0x1, r7
+# r7&=47aa
+and #0x47aa, r7
+# r8+=r7
+add r7,r8
+# r7=0
+clr r7
+
+# r4=pwd[0]
+# r6=swap(pwd[0])
+
+# r4=swap(pwd[0]+pwd[2])
+
+# r4+=pwd[2]
+add @r5, r4
+# swp(r4)
+swpb r4
+
+# r6^=pwd[2] ; pwd+=2
+xor @r5+, r6
+
+# r6^=r4
+xor r4, r6
+# r4^=r6
+xor r6, r4
+# r6^=r4
+xor r4, r6
+
+# sr=(pwd[4]==0)
+tst 0x0(r5)
+
+# r7=(sr&0x2)>>1
+mov sr, r7
+and #0x2, r7
+rra r7
+# r7^=1
+xor #0x1, r7
+# swp(r7)
+swpb r7
+# r7>>
+rra r7
+# sxt(r7)
+sxt r7
+# swp(r7)
+swpb r7
+# sxt(r7)
+sxt r7
+# r7=0x4b18
+mov 0x4b18, r8
+# r8&=r7
+and r7, r8
+# r7^=0xffff
+xor #-0x1, r7
+# r7&=0x47aa
+and #0x47aa, r7
+# r8+=r7
+add r7,r8
+# r7=0
+clr r7
+
+# r4=swap(pwd[0])^pwd[2]
+# r6=swap(pwd[0]+pwd[2])
+
+:check_password
+# r7=(r4==0xfeb1)
+cmp #0xfeb1, r4
+mov sr, r7
+clr r4
+# r7&=(r6==0x9298)
+cmp #0x9298, r6
+and sr, r7
+clr r6
+# r7>>
+rra r7
+# r7^=1
+xor 0x1, r7
+# swp(r7)
+swpb r7
+# r7>>=4
+rra r7
+rra r7
+rra r7
+rra r7
+# sr|=r7
+bis r7, sr
+# CPU flag?
+: unlock
+mov #0xff00, sr
+call #0x10
