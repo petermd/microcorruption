@@ -34,18 +34,13 @@ puts("Whats the password?")
 mov #0x2600, r5
 # r6=0
 clr r6
-# r4=swap(pwd[0])
+
 add @r5, r4
-# swp(r4)
 swpb r4
-# r6=0^pwd[0] // pwd+=2
 xor @r5+, r6
 # exchange(r4,r6)
-# r6^=r4
 xor r4,r6
-# r4^=r6
 xor r6,r4
-# r6^=r4
 xor r4,r6
 # sr=(pwd[2]==0)
 tst 0x0(r5)
@@ -85,19 +80,12 @@ clr r7
 
 # r4=swap(pwd[0]+pwd[2])
 
-# r4+=pwd[2]
 add @r5, r4
-# swp(r4)
 swpb r4
-
-# r6^=pwd[2] ; pwd+=2
 xor @r5+, r6
-
-# r6^=r4
+# exchange(r4,r6)
 xor r4, r6
-# r4^=r6
 xor r6, r4
-# r6^=r4
 xor r4, r6
 
 # sr=(pwd[4]==0)
